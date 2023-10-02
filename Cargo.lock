@@ -775,13 +775,17 @@ checksum = "55937e1799185b12863d447f42597ed69d9928686b8d88a1df17376a097d8369"
 name = "teo-language-server-wasm"
 version = "0.0.1"
 dependencies = [
+ "teo-parser",
+ "wasm-bindgen",
+ "wasm-logger",
+]
+
+[[package]]
+name = "teo-parser"
+version = "0.0.58-alpha.0"
+dependencies = [
  "array_tool",
- "bigdecimal",
- "bson",
- "chrono",
  "colored",
- "getrandom",
- "indexmap 2.0.0",
  "itertools",
  "maplit",
  "once_cell",
@@ -793,8 +797,25 @@ dependencies = [
  "serde",
  "serde_json",
  "snailquote",
- "wasm-bindgen",
- "wasm-logger",
+ "teo-teon",
+]
+
+[[package]]
+name = "teo-teon"
+version = "0.0.58-alpha.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "4f85104a91e0643562aaa490e5b84d2ff38a9cf224943e1aa10fc860a6ad05a8"
+dependencies = [
+ "bigdecimal",
+ "bson",
+ "chrono",
+ "getrandom",
+ "indexmap 2.0.0",
+ "itertools",
+ "maplit",
+ "regex",
+ "serde",
+ "serde_json",
 ]
 
 [[package]]
