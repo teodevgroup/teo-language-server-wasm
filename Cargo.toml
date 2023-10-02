@@ -1,7 +1,12 @@
 [package]
 name = "teo-language-server-wasm"
-version = "0.0.1"
+description = "TEO language server WASM implementation"
+version = "0.0.3"
 edition = "2021"
+license = "Apache-2.0"
+homepage = "https://teocloud.io"
+documentation = "https://teocloud.io/docs"
+repository = "https://github.com/teocloud/teo-language-server-wasm"
 
 [lib]
 crate-type = ["cdylib"]
