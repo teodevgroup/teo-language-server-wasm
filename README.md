@@ -3,5 +3,5 @@
 
 ## Build the package
 ```sh
-wasm-pack build -t nodejs
+./build.sh
 ```
