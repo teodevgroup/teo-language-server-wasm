@@ -31,6 +31,11 @@ pub fn find_definitions(path: &str, line_col_range_js: JsValue) -> JsValue {
     serde_wasm_bindgen::to_value(&definitions).unwrap()
 }
 
+#[wasm_bindgen]
+pub fn remove_cached_schema(path: &str) {
+    SCHEMA_CACHE.lock().unwrap().remove(path);
+}
+
 fn parse_internal(path: &str, unsaved_files: JsValue) -> (Schema, Diagnostics) {
     let unsaved_hash: HashMap<String, String> = serde_wasm_bindgen::from_value(unsaved_files).unwrap();
     parse(path, Some(FileUtility {
