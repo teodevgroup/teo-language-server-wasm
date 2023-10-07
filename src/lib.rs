@@ -14,20 +14,6 @@ use teo_parser::utils::path::FileUtility;
 use crate::utils::{file_exists_wasm, parent_directory_wasm, path_is_absolute_wasm, path_join_wasm, read_file_wasm};
 
 #[wasm_bindgen]
-extern "C" {
-    // Use `js_namespace` here to bind `console.log(..)` instead of just
-    // `log(..)`
-    #[wasm_bindgen(js_namespace = console)]
-    fn log(s: &str);
-}
-
-macro_rules! console_log {
-    // Note that this is using the `log` function imported above during
-    // `bare_bones`
-    ($($t:tt)*) => (log(&format_args!($($t)*).to_string()))
-}
-
-#[wasm_bindgen]
 pub fn lint(path: &str, unsaved_files: JsValue) -> String {
     panic::set_hook(Box::new(console_error_panic_hook::hook));
     let (schema, diagnostics) = parse_internal(&path, unsaved_files);
@@ -48,12 +34,9 @@ pub fn find_definitions(path: &str, line_col_range_js: JsValue) -> JsValue {
 
 #[wasm_bindgen]
 pub fn completion_items(path: &str, line_col_range_js: JsValue, unsaved_files: JsValue) -> JsValue {
-    console_log!("here runs 1");
     let (schema, _) = parse_internal(&path, unsaved_files);
     let line_col: (usize, usize) = serde_wasm_bindgen::from_value(line_col_range_js).unwrap();
-    console_log!("here runs 2");
     let completions = auto_complete_items(&schema, &path, line_col);
-    console_log!("here runs 3");
     serde_wasm_bindgen::to_value(&completions).unwrap()
 }
 
