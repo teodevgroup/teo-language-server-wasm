@@ -7,7 +7,7 @@ function readFileSync(path) {
 function fileIsDirectory(path) {
     let stats = fs.statSync(path)
     if (stats) {
-        return fs.isDirectory(path)
+        return stats.isDirectory()
     }
     return false
 }
