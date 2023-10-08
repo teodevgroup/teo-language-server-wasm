@@ -11,7 +11,7 @@ use std::sync::Mutex;
 use teo_parser::ast::schema::Schema;
 use teo_parser::diagnostics::diagnostics::Diagnostics;
 use teo_parser::utils::path::FileUtility;
-use crate::utils::{file_exists_wasm, parent_directory_wasm, path_is_absolute_wasm, path_join_wasm, read_file_wasm};
+use crate::utils::{file_exists_wasm, file_is_directory, parent_directory_wasm, path_is_absolute_wasm, path_join_wasm, read_file_wasm};
 
 #[wasm_bindgen]
 pub fn lint(path: &str, unsaved_files: JsValue) -> String {
@@ -53,6 +53,7 @@ fn parse_internal(path: &str, unsaved_files: JsValue) -> (Schema, Diagnostics) {
         path_join: path_join_wasm,
         parent_directory: parent_directory_wasm,
         path_is_absolute: path_is_absolute_wasm,
+        file_is_directory,
     }), Some(unsaved_hash))
 }
 

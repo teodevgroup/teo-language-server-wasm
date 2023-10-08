@@ -4,6 +4,9 @@ use wasm_bindgen::prelude::*;
 extern "C" {
     #[wasm_bindgen(js_name = readFileSync, catch)]
     fn read_file_sync(path: &str) -> Result<String, JsValue>;
+
+    #[wasm_bindgen(js_name = fileIsDirectory, catch)]
+    fn file_is_directory_js(path: &str) -> Result<bool, JsValue>;
 }
 
 #[wasm_bindgen(module = "fs")]
@@ -60,5 +63,12 @@ pub(super) fn path_is_absolute_wasm(file_path: &str) -> bool {
     match is_absolute(file_path) {
         Ok(b) => b,
         Err(_) => panic!("Cannot get directory is absolute or not"),
+    }
+}
+
+pub(super) fn file_is_directory(file_path: &str) -> bool {
+    match file_is_directory_js(file_path) {
+        Ok(v) => v,
+        Err(_) => false,
     }
 }
