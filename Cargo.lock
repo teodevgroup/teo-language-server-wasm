@@ -408,12 +408,13 @@ dependencies = [
 
 [[package]]
 name = "indexmap"
-version = "2.0.2"
+version = "2.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8adf3ddd720272c6ea8bf59463c04e0f93d0bbf7c5439b691bca2987e0270897"
+checksum = "d530e1a18b1cb4c484e6e34556a0d948706958449fca0cab753d649f2bce3d1f"
 dependencies = [
  "equivalent",
  "hashbrown 0.14.1",
+ "serde",
 ]
 
 [[package]]
@@ -734,7 +735,7 @@ version = "1.0.107"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "6b420ce6e3d8bd882e9b243c6eed35dbc9a6110c9769e74b584e0d68d1f20c65"
 dependencies = [
- "indexmap 2.0.2",
+ "indexmap 2.1.0",
  "itoa",
  "ryu",
  "serde",
@@ -837,6 +838,7 @@ dependencies = [
  "array_tool",
  "colored",
  "educe",
+ "indexmap 2.1.0",
  "itertools",
  "maplit",
  "once_cell",
@@ -852,19 +854,26 @@ dependencies = [
 ]
 
 [[package]]
+name = "teo-result"
+version = "0.0.58-alpha.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "bd6aa4ccc6bebe58a5539efced1863b43fd5043536b55ee57145a1bf1930596d"
+
+[[package]]
 name = "teo-teon"
-version = "0.0.58-alpha.5"
+version = "0.0.58-alpha.6"
 dependencies = [
  "bigdecimal",
  "bson",
  "chrono",
  "getrandom",
- "indexmap 2.0.2",
+ "indexmap 2.1.0",
  "itertools",
  "maplit",
  "regex",
  "serde",
  "serde_json",
+ "teo-result",
 ]
 
 [[package]]
