@@ -2,7 +2,7 @@ mod utils;
 mod console;
 
 use once_cell::sync::Lazy;
-use std::collections::HashMap;
+use std::collections::{BTreeMap};
 use wasm_bindgen::prelude::*;
 use teo_parser::{parse, generate_json_diagnostics, jump_to_definition, auto_complete_items};
 extern crate console_error_panic_hook;
@@ -46,7 +46,7 @@ pub fn remove_cached_schema(path: &str) {
 }
 
 fn parse_internal(path: &str, unsaved_files: JsValue) -> (Schema, Diagnostics) {
-    let unsaved_hash: HashMap<String, String> = serde_wasm_bindgen::from_value(unsaved_files).unwrap();
+    let unsaved_map: BTreeMap<String, String> = serde_wasm_bindgen::from_value(unsaved_files).unwrap();
     parse(path, Some(FileUtility {
         read_file: read_file_wasm,
         file_exists: file_exists_wasm,
@@ -54,9 +54,9 @@ fn parse_internal(path: &str, unsaved_files: JsValue) -> (Schema, Diagnostics) {
         parent_directory: parent_directory_wasm,
         path_is_absolute: path_is_absolute_wasm,
         file_is_directory,
-    }), Some(unsaved_hash))
+    }), Some(unsaved_map))
 }
 
-static SCHEMA_CACHE: Lazy<Mutex<HashMap<String, Schema>>> = Lazy::new(|| {
-    Mutex::new(HashMap::new())
+static SCHEMA_CACHE: Lazy<Mutex<BTreeMap<String, Schema>>> = Lazy::new(|| {
+    Mutex::new(BTreeMap::new())
 });
