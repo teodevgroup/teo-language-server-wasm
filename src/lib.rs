@@ -4,7 +4,7 @@ mod console;
 use once_cell::sync::Lazy;
 use std::collections::{BTreeMap};
 use wasm_bindgen::prelude::*;
-use teo_parser::{parse, generate_json_diagnostics, jump_to_definition, auto_complete_items};
+use teo_parser::{parse, generate_json_diagnostics, jump_to_definition, auto_complete_items, format_document as format_document_parser};
 extern crate console_error_panic_hook;
 use std::panic;
 use std::sync::Mutex;
@@ -43,6 +43,13 @@ pub fn completion_items(path: &str, line_col_range_js: JsValue, unsaved_files: J
 #[wasm_bindgen]
 pub fn remove_cached_schema(path: &str) {
     SCHEMA_CACHE.lock().unwrap().remove(path);
+}
+
+#[wasm_bindgen]
+pub fn format_document(path: &str, unsaved_files: JsValue) -> String {
+    panic::set_hook(Box::new(console_error_panic_hook::hook));
+    let (schema, diagnostics) = parse_internal(&path, unsaved_files);
+    format_document_parser(&schema, path)
 }
 
 fn parse_internal(path: &str, unsaved_files: JsValue) -> (Schema, Diagnostics) {
