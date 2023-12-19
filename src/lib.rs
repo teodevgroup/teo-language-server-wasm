@@ -1,6 +1,7 @@
 mod utils;
 mod console;
 
+use std::borrow::Cow;
 use once_cell::sync::Lazy;
 use std::collections::{BTreeMap};
 use wasm_bindgen::prelude::*;
@@ -34,9 +35,13 @@ pub fn find_definitions(path: &str, line_col_range_js: JsValue) -> JsValue {
 
 #[wasm_bindgen]
 pub fn completion_items(path: &str, line_col_range_js: JsValue, unsaved_files: JsValue) -> JsValue {
-    let (schema, _) = parse_internal(&path, unsaved_files);
     let line_col: (usize, usize) = serde_wasm_bindgen::from_value(line_col_range_js).unwrap();
-    let completions = auto_complete_items(&schema, &path, line_col);
+    let completions = if let Some(cached_schema) = SCHEMA_CACHE.lock().unwrap().get(path) {
+        auto_complete_items(cached_schema, &path, line_col)
+    } else {
+        let (schema, _) = parse_internal(&path, unsaved_files);
+        auto_complete_items(&schema, &path, line_col)
+    };
     serde_wasm_bindgen::to_value(&completions).unwrap()
 }
 
