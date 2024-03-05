@@ -18,36 +18,49 @@ use crate::utils::{file_exists_wasm, file_is_directory, parent_directory_wasm, p
 pub fn lint(path: &str, unsaved_files: JsValue) -> String {
     panic::set_hook(Box::new(console_error_panic_hook::hook));
     let (schema, diagnostics) = parse_internal(&path, unsaved_files);
-    SCHEMA_CACHE.lock().unwrap().insert(path.to_owned(), schema);
+    if let Ok(mut locked) = SCHEMA_CACHE.lock() {
+        locked.insert(path.to_owned(), schema);
+    }
     generate_json_diagnostics(&diagnostics, true)
 }
 
 #[wasm_bindgen]
 pub fn find_definitions(path: &str, line_col_range_js: JsValue) -> JsValue {
-    let definitions = if let Some(schema) = SCHEMA_CACHE.lock().unwrap().get(path) {
-        let line_col: (usize, usize) = serde_wasm_bindgen::from_value(line_col_range_js).unwrap();
-        jump_to_definition(&schema, &path, line_col)
+    if let Ok(locked) = SCHEMA_CACHE.lock() {
+        let definitions = if let Some(schema) = locked.get(path) {
+            let line_col: (usize, usize) = serde_wasm_bindgen::from_value(line_col_range_js).unwrap();
+            jump_to_definition(&schema, &path, line_col)
+        } else {
+            vec![]
+        };
+        serde_wasm_bindgen::to_value(&definitions).unwrap()
     } else {
-        vec![]
-    };
-    serde_wasm_bindgen::to_value(&definitions).unwrap()
+        serde_wasm_bindgen::to_value(&Vec::<String>::new()).unwrap()
+    }
 }
 
 #[wasm_bindgen]
 pub fn completion_items(path: &str, line_col_range_js: JsValue, unsaved_files: JsValue) -> JsValue {
     let line_col: (usize, usize) = serde_wasm_bindgen::from_value(line_col_range_js).unwrap();
-    let completions = if let Some(cached_schema) = SCHEMA_CACHE.lock().unwrap().get(path) {
-        auto_complete_items(cached_schema, &path, line_col)
+    if let Ok(locked) = SCHEMA_CACHE.lock() {
+        let completions = if let Some(cached_schema) = locked.get(path) {
+            auto_complete_items(cached_schema, &path, line_col)
+        } else {
+            let (schema, _) = parse_internal(&path, unsaved_files);
+            auto_complete_items(&schema, &path, line_col)
+        };
+        serde_wasm_bindgen::to_value(&completions).unwrap()
     } else {
-        let (schema, _) = parse_internal(&path, unsaved_files);
-        auto_complete_items(&schema, &path, line_col)
-    };
-    serde_wasm_bindgen::to_value(&completions).unwrap()
+        serde_wasm_bindgen::to_value(&Vec::<String>::new()).unwrap()
+    }
+
 }
 
 #[wasm_bindgen]
 pub fn remove_cached_schema(path: &str) {
-    SCHEMA_CACHE.lock().unwrap().remove(path);
+    if let Ok(mut locked) = SCHEMA_CACHE.lock() {
+        locked.remove(path);
+    }
 }
 
 #[wasm_bindgen]
