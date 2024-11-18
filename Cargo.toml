@@ -6,7 +6,7 @@ edition = "2021"
 license = "Apache-2.0"
 homepage = "https://teodev.io"
 documentation = "https://teodev.io/docs"
-repository = "https://github.com/teodev/teo-language-server-wasm"
+repository = "https://github.com/teodevgroup/teo-language-server-wasm"
 
 [lib]
 crate-type = ["cdylib"]
